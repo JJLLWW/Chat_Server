@@ -1,29 +1,21 @@
+const bcrypt = require('bcryptjs');
 const { User } = require('../models');
+const { TryLoginResolver } = require('./login');
+const { GetUserResolver } = require('./getuser');
 
-// every resolver takes arguments (parent, gql_args, context, info)
+// at no point should the client ever be able to access a user's password
 const resolvers = {
   Query: {
     doNothing: (parent, {}, ctxt, info) => true,
-    GetUser: async (parent, { name }, ctxt, info) => {
-      const user = await User.findOne({
-        where: {
-          name,
-        },
-      });
-      // no error
-      if (user !== null) {
-        return user;
-      }
-      // error
-      return { name: null, email: null, errors: [{ message: 'user does not exist' }] };
-    },
+    GetUser: GetUserResolver,
   },
   Mutation: {
-    addUser: (parent, { name, email }, ctxt, info) => {
+    AddUser: (parent, { name, email, password }, ctxt, info) => {
       // how to do error checking? what if user already present?
-      const user = User.create({ name, email });
+      const user = User.create({ name, email, password: bcrypt.hashSync(password) });
       return true;
     },
+    TryLogin: TryLoginResolver,
   },
 };
 

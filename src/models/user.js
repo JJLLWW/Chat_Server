@@ -12,6 +12,11 @@ const User = sequelize.define('user', {
     allowNull: false,
     unique: true,
   },
+  password: {
+    // bcrypt hashes strings into strings
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
 
 exports.User = User;
