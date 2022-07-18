@@ -1,9 +1,38 @@
+const { ApolloServerPluginDrainHttpServer } = require('apollo-server-core');
+
 const { ApolloServer } = require('apollo-server-express');
+const { makeExecutableSchema } = require('@graphql-tools/schema');
+
+const { useServer } = require('graphql-ws/lib/use/ws');
+const { WebSocketServer } = require('ws');
 
 const { resolvers } = require('./resolvers');
-const { schema } = require('./schema');
+const { typeDefs } = require('./schema');
 
-// const server = new ApolloServer({ typeDefs: schema, resolvers });
-const server = new ApolloServer({ typeDefs: schema, resolvers });
+function StartGQLServer(HttpServer) {
+  const schema = makeExecutableSchema({ typeDefs, resolvers });
+  const WsServer = new WebSocketServer({
+    server: HttpServer,
+    path: '/graphql',
+  });
+  const serverCleanup = useServer({ schema }, WsServer);
+  const GqlServer = new ApolloServer({
+    schema,
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer: HttpServer }),
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await serverCleanup.dispose();
+            },
 
-exports.GqlServer = server;
+          };
+        },
+      },
+    ],
+  });
+  return GqlServer;
+}
+
+exports.StartGQLServer = StartGQLServer;

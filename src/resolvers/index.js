@@ -17,6 +17,15 @@ const resolvers = {
     },
     TryLogin: TryLoginResolver,
   },
+  Subscription: {
+    TestSubscription: {
+      async* subscribe() {
+        for await (const c of ['h', 'e', 'l', 'l', 'o']) {
+          yield c;
+        }
+      },
+    },
+  },
 };
 
 exports.resolvers = resolvers;

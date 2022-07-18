@@ -23,6 +23,9 @@ const typeDefs = gql`
         AddUser(name: String!, email: String!): Boolean!
         TryLogin(name: String!, password: String!): LoginResponse!
     },
+    type Subscription {
+        TestSubscription: String!
+    }
 `;
 
-exports.schema = typeDefs;
+exports.typeDefs = typeDefs;
