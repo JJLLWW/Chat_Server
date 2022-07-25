@@ -15,6 +15,13 @@ const typeDefs = gql`
         token: String
         errors: [Error!]
     },
+    type MsgResponse {
+        success: Boolean!
+        errors: [Error!]
+    },
+    type Message {
+        text: String!
+    },
     type Query {
         doNothing: Boolean
         GetUser(name: String): User
@@ -22,9 +29,11 @@ const typeDefs = gql`
     type Mutation {
         AddUser(name: String!, email: String!): Boolean!
         TryLogin(name: String!, password: String!): LoginResponse!
+        SendMsg(text: String!): MsgResponse
     },
     type Subscription {
-        TestSubscription: String!
+        TestSubscription: String,
+        MsgSub: Message,
     }
 `;
 

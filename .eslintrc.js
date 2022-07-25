@@ -11,6 +11,7 @@ module.exports = {
     ecmaVersion: 'latest',
   },
   rules: {
+    'object-shorthand': false,
     // 'prefer-const': false,
   },
 };

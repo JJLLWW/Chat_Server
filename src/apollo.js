@@ -11,6 +11,7 @@ const { typeDefs } = require('./schema');
 
 function StartGQLServer(HttpServer) {
   const schema = makeExecutableSchema({ typeDefs, resolvers });
+  // path {String} Accept only connections matching this path.
   const WsServer = new WebSocketServer({
     server: HttpServer,
     path: '/graphql',
@@ -32,7 +33,7 @@ function StartGQLServer(HttpServer) {
       },
     ],
   });
-  return GqlServer;
+  return [GqlServer, WsServer];
 }
 
 exports.StartGQLServer = StartGQLServer;
